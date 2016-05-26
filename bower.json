@@ -1,0 +1,8 @@
+{
+  "name": "foss4g2016_ol3_closure",
+  "version": "0.0.1",
+  "dependencies": {
+    "reveal.js": "3.3.0",
+    "bootstrap": "2.3.2"
+  }
+}

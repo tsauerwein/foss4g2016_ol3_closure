@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OpenLayers 3 + Google Closure Compiler</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="bower_components/reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="theme/c2c.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="bower_components/reveal.js/lib/css/zenburn.css">
+
+    <!--[if lt IE 9]>
+    <script src="bower_components/reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <style>
+      .reveal h1.beefy {
+        font-weight: bold;
+        text-transform: uppercase;
+        text-shadow: 10px 10px 6px rgba(0, 0, 0, 0.2);
+      }
+      .reveal ul.plain {
+        list-style-type: none;
+      }
+      .reveal h2 {
+        margin-bottom: 40px;
+      }
+      .reveal h3 {
+        margin-bottom: 30px;
+      }
+      .reveal h2 > img {
+        vertical-align: sub;
+      }
+      .text-align-left {
+        text-align: left;
+      }
+      .ex-link {
+        font-size: smaller;
+      }
+      .underline {
+        text-decoration: underline;
+      }
+      #logos > div {
+        padding: 0 10px;
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+      }
+      #logos > div img {
+        margin: 0;
+        vertical-align: text-bottom;
+      }
+      pre.narrow {
+        width: 50%;
+      }
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4,
+      .reveal h5,
+      .reveal h6 {
+        font-weight: 400;
+      }
+      div.bg-box {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+      }
+      .bg-box h2 {
+        margin-bottom: 4px;
+        font-size: 130%;
+      }
+      .bg-box ul {
+        margin-left: 30px;
+      }
+    </style>
+
+    <script>
+        if (window.location.search.match( /print-pdf/gi ) ) {
+          var link = document.createElement( 'link' );
+          link.rel = 'stylesheet';
+          link.type = 'text/css';
+          link.href = 'bower_components/reveal.js/css/print/pdf.css';
+          document.getElementsByTagName( 'head' )[0].appendChild( link );
+        }
+    </script>
+
+  </head>
+  <body>
+
+    <div class="reveal">
+      <div class="slides">
+        <section data-background="img/tools.jpg">
+          <div class="bg-box">
+            <h1 style="font-style: italic;">Faster, smaller, better</h1>
+            <h2>Compiling your application together with OpenLayers 3</h2>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>Tobias Sauerwein</p>
+            <p>Camptocamp</p>
+          </div>
+          <p>&nbsp;</p>
+        </section>
+        <section>
+          <h1 class="beefy">Camptocamp</h1>
+          <div style="position: relative;">
+            <img src="img/c2c.png" style="opacity: 0.5; width: 100%; ">
+            <img class="fragment" src="img/hiring.png" 
+              style="position: absolute; top: 30px; right: 30px;">
+          </div>
+        </section>
+        <section data-background="img/coffee.jpg">
+          <div class="bg-box">
+            <h1 class="medium">How do you like your OpenLayers?</h1>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div style="display: flex; justify-content: space-between; padding: 10px;" class="fat">
+              <span class="fragment">pre-built</span>
+              <span class="fragment">custom-built</span>
+              <span class="fragment">co-built</span>
+            </div>
+            <p>&nbsp;</p>
+          </div>
+          <aside class="notes">
+          How can you use ol3?
+          1. pre-built: pre-compiled, full build
+          2. custom-built: compile ol3 with only the modules that you need
+          3. co-built: compile your application together with ol3
+          </aside>
+        </section>
+        <section data-background="img/cranes.jpg">
+          <div class="bg-box">
+            <h1 class="big">JavaScript development today</h1>
+          </div>
+          <aside class="notes">
+          When JavaScript was invented, no-one knew that it would be used
+          to build complex web-applications, like it is nowadays.
+          </aside>
+        </section>
+        <section>
+          <h1 class="beefy">Challenges of writing large JS applications</h1>
+          <ul>
+            <li class="fragment">namespaces?</li>
+            <li class="fragment">visibility control?</li>
+            <li class="fragment">type checking?</li>
+            <li class="fragment">static checking?</li>
+            <li class="fragment">testing?</li>
+          </ul>
+          <aside class="notes">
+          - No namespaces (modules, organize your code)
+          - No visibility control (public/protected/private)
+          - No type checking (duck-typing vs. static-typing,
+            which properties/methods does that object have)
+          - No static checking (errors only detected at run time)
+          - Testing (not covered by this talk)
+          </aside>
+        </section>
+        <section>
+          <h1 class="beefy">Google Closure Tools</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Google Closure Compiler</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Static checks</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Optimizations</h1>
+          <pre><code>
+function() {
+  
+}
+          </code></pre>
+        </section>
+        <section>
+          <h1 class="beefy">Typing</h1>
+        </section>
+        <section>
+          <h1 class="beefy">First example with ol3</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Why compile with ol3</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Build sizes</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Tooling</h1>
+        </section>
+        <section>
+          <h1 class="beefy">Example projects</h1>
+        </section>
+        <section data-background="img/peak.jpg">
+          <div class="bg-box" style="margin-top: 200px;">
+            <h1 class="big">Learning curve?</h1>
+          </div>
+        </section>
+        <section>
+          <h1 class="beefy">Resources: How to get started</h1>
+        </section>
+        <section>
+          <h1 class="beefy">This talk</h1>
+          <p>This presentation on GitHub: <br/><a href="https://github.com/tsauerwein/foss4g2016_ol3_closure"
+              target="_blank">github.com/tsauerwein/foss4g2016_ol3_closure</a></p>
+          <p>&nbsp;</p>
+          <p>Me on GitHub/Twitter: <br/>@tsauerwein<br/>
+            <a href="https://github.com/tsauerwein"
+              target="_blank"><img src="img/github.png"></a>
+            <a href="https://twitter.com/tsauerwein"
+              target="_blank"><img src="img/twitter.png"></a>
+          </p>
+        </section>
+        <section>
+          todo: image licenses
+        </section>
+        <section>
+          <img src="img/logo_c2c_end.png" style="width: 100%; ">
+        </section>
+      </div>
+    </div>
+
+    <!-- reveal.js loading and configuration -->
+    <script src="bower_components/reveal.js/lib/js/head.min.js"></script>
+    <script src="bower_components/reveal.js/js/reveal.js"></script>
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        rollingLinks: false,
+        transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none,
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [{
+          src: 'bower_components/reveal.js/lib/js/classList.js',
+          condition: function() {
+            return !document.body.classList;
+          }
+        }, {
+          src: 'bower_components/reveal.js/plugin/highlight/highlight.js',
+          async: true,
+          callback: function() {
+            hljs.initHighlightingOnLoad();
+          }
+        }]
+      });
+
+    </script>
+  </body>
+</html>
