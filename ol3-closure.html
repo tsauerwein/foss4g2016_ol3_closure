@@ -23,6 +23,7 @@
         font-weight: bold;
         text-transform: uppercase;
         text-shadow: 10px 10px 6px rgba(0, 0, 0, 0.2);
+        margin-bottom: 50px;
       }
       .reveal ul.plain {
         list-style-type: none;
@@ -139,6 +140,8 @@
           <aside class="notes">
           When JavaScript was invented, no-one knew that it would be used
           to build complex web-applications, like it is nowadays.
+          Writing simple JS snippets to validate a form or to basic animations,
+          is very different from building full-blown applications.
           </aside>
         </section>
         <section>
@@ -161,9 +164,58 @@
         </section>
         <section>
           <h1 class="beefy">Google Closure Tools</h1>
+          <h2 class="fragment">Google Closure Compiler</h2>
+          <h2 class="fragment">Google Closure Library</h2>
+          <div style="position: relative;">
+            <img src="img/logo_maps_32dp.png"
+              style="position:absolute; right: 90px; top: -100px;">
+            <img src="img/logo_gmail_32dp.png"
+              style="position:absolute; right: 60px; top: -200px;">
+            <img src="img/logo_docs_32dp.png"
+              style="position:absolute; right: 10px; top: -130px;">
+          </div>
+          <aside class="notes">
+          Google has "some" experiences in building complex JS applications.
+          Apps like Google Maps or Google Mail are built using the Google Closure
+          Tools, a set of tools and libraries to ease the development of JS apps.
+          The two most important are the Closure Compiler and the Closure library.
+          The Closure Library is a library similar to jQuery which provides UI
+          widgets and a standard library with useful functions and classes.
+          We are going to focus on the Closure Compiler.
+          </aside>
         </section>
         <section>
           <h1 class="beefy">Google Closure Compiler</h1>
+          <p>compiles JavaScript to <span style="font-weight: bold">better</span> JavaScript</p>
+          <p>&nbsp;</p>
+          <ul>
+            <li class="fragment">code checks (syntax, variable references)</li>
+            <li class="fragment">common pitfalls</li>
+            <li class="fragment">optimizations (inlining, dead-code)</li>
+            <li class="fragment">static type checking</li>
+          </ul>
+          <aside class="notes">
+          Most build system for JS apps have some kind of pre-processor
+          step for minifying JS code. Newer apps are using a transpiler
+          that converts from ES 6/7 to ES 5, which is understood by most
+          browsers.
+          The Closure Compiler is a minifier, actually a quite good one, but
+          that's not all.
+          The compiler parses and analyzes the code and does a number of checks
+          and optimizations:
+
+          - syntax check, undeclared variables
+          - common pitfalls (division by 0, array index out of bound, ...)
+            See https://developers.google.com/closure/compiler/docs/error-ref
+          - optimizations: function-inlining, dead-code removal, renaming
+            variable, function, class names
+          - static type checking
+
+          All these checks help to detect problems that otherwise would only
+          be detected when running the code.
+          The optimizations of the compiler produce more efficient and smaller
+          code.
+          </aside>
         </section>
         <section>
           <h1 class="beefy">Static checks</h1>

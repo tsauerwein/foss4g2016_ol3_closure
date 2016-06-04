@@ -113,7 +113,7 @@ body {
   margin: 0 0 20px 0;
   color: #4b4b4d;
   font-family: "Open Sans", Verdana, sans-serif;
-  line-height: 0.9em;
+  line-height: 1.2em;
   letter-spacing: 0;
   text-shadow: none;
   font-weight: 300;
@@ -260,4 +260,8 @@ body {
 
 .reveal .fat {
   font-weight: bold;
+}
+
+.reveal q {
+  font-style: italic;
 }
