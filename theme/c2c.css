@@ -265,3 +265,7 @@ body {
 .reveal q {
   font-style: italic;
 }
+
+.reveal p {
+  line-height: normal;
+}

@@ -78,6 +78,16 @@
       .bg-box ul {
         margin-left: 30px;
       }
+      .compilation-levels h2 {
+        margin-top: 40px;
+        margin-bottom: 5px;
+      }
+      div.in-code-box {
+        position: absolute;
+        border: 1px solid #FFFFFF;
+        background-color: #DCDCDC;
+        padding: 5px;
+      }
     </style>
 
     <script>
@@ -106,6 +116,7 @@
           </div>
           <p>&nbsp;</p>
         </section>
+
         <section>
           <h1 class="beefy">Camptocamp</h1>
           <div style="position: relative;">
@@ -114,6 +125,7 @@
               style="position: absolute; top: 30px; right: 30px;">
           </div>
         </section>
+
         <section data-background="img/coffee.jpg">
           <div class="bg-box">
             <h1 class="medium">How do you like your OpenLayers?</h1>
@@ -133,6 +145,7 @@
           3. co-built: compile your application together with ol3
           </aside>
         </section>
+
         <section data-background="img/cranes.jpg">
           <div class="bg-box">
             <h1 class="big">JavaScript development today</h1>
@@ -144,6 +157,7 @@
           is very different from building full-blown applications.
           </aside>
         </section>
+
         <section>
           <h1 class="beefy">Challenges of writing large JS applications</h1>
           <ul>
@@ -162,6 +176,7 @@
           - Testing (not covered by this talk)
           </aside>
         </section>
+
         <section>
           <h1 class="beefy">Google Closure Tools</h1>
           <h2 class="fragment">Google Closure Compiler</h2>
@@ -184,13 +199,14 @@
           We are going to focus on the Closure Compiler.
           </aside>
         </section>
+
         <section>
           <h1 class="beefy">Google Closure Compiler</h1>
           <p>compiles JavaScript to <span style="font-weight: bold">better</span> JavaScript</p>
           <p>&nbsp;</p>
           <ul>
             <li class="fragment">code checks (syntax, variable references)</li>
-            <li class="fragment">common pitfalls</li>
+            <li class="fragment">checks for common pitfalls</li>
             <li class="fragment">optimizations (inlining, dead-code)</li>
             <li class="fragment">static type checking</li>
           </ul>
@@ -204,7 +220,7 @@
           The compiler parses and analyzes the code and does a number of checks
           and optimizations:
 
-          - syntax check, undeclared variables
+          - syntax check, undeclared variables (similar to ESLint)
           - common pitfalls (division by 0, array index out of bound, ...)
             See https://developers.google.com/closure/compiler/docs/error-ref
           - optimizations: function-inlining, dead-code removal, renaming
@@ -217,43 +233,158 @@
           code.
           </aside>
         </section>
-        <section>
-          <h1 class="beefy">Static checks</h1>
+
+        <section class="compilation-levels">
+          <h1 class="beefy">Compilation levels</h1>
+          <div>
+            <h2>WHITESPACE_ONLY</h2>
+            <p>removes comments/whitespace</p>
+          </div>
+          <div class="fragment">
+            <h2>SIMPLE_OPTIMIZATIONS</h2>
+            <p>renames local variables</p>
+          </div>
+          <div class="fragment">
+            <h2>ADVANCED_OPTIMIZATIONS</h2>
+            <p>aggressive renaming, inlining, dead-code removal</p>
+          </div>
+          <aside class="notes">
+          - whitespace only
+          - simple optimizations
+            similar to normal minifiers, only renaming local variables
+          - advanced optimization
+            + more aggressive renaming: also renames global variables,
+              function names, and properties
+            + optimizations (inlining, dead-code removal)
+          </aside>
         </section>
+
         <section>
-          <h1 class="beefy">Optimizations</h1>
-          <pre><code>
-function() {
-  
+          <h1 class="beefy">Dead-code removal + Inlining</h1>
+          <pre><code>goog.provide('app');
+
+app.printHello = function() {
+    console.log('Hello');
+};
+
+app.someUnusedFunction = function() {
+    console.log('Unused function');
+};
+
+app.run = function() {
+    app.printHello();
+};
+
+app.run();</code></pre>
+          <div style="position: relative;">
+            <div class="in-code-box fragment"
+                 style="right: 10px; bottom: 90px;">
+               <p>Compiled</p>
+              <pre><code>(function(){console.log("Hello");})();</code></pre>
+            </div>
+          </div>
+          <aside class="notes">
+          Optimization: unused function "someUnusedFunction" is removed,
+          other functions are inlined.
+          In this case, removing the unused function was not a huge win.
+          But when using a big library (like OpenLayer 3), many unused
+          functions can be removed.
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">Renaming</h1>
+          <pre><code>goog.provide('app');
+
+function hello(o) {
+    alert('Hello, ' + o.firstName + ' ' + o.lastName);
 }
-          </code></pre>
+
+app.run = function() {
+    var person = {firstName: 'New', lastName: 'user'};
+    hello(person);
+    console.log(person);
+};
+
+app.run();</code></pre>
+          <div style="position: relative;">
+            <div class="in-code-box fragment"
+                 style="right: -40px; bottom: -70px;">
+               <p>Compiled (pretty_print)</p>
+              <pre><code>(function(){var a = {a:"New", b:"user"};
+alert("Hello, " + a.a + " " + a.b);
+console.log(a);
+})();</code></pre>
+            </div>
+          </div>
+          <aside class="notes">
+          The property names of the object are renamed.
+          TODO: Also mention the difference between `a.name`
+          vs `a['name']`, see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
+          </aside>
         </section>
+
+        <section>
+          <h1 class="beefy">Exports</h1>
+          <pre><code>&#x3C;button onclick=&#x22;app.doSomething()&#x22;&#x3E;...&#x3C;/button&#x3E;</code></pre>
+          <p>&nbsp;</p>
+          <p class="fragment">How to avoid the renaming and dead-code removal?</p>
+          <p>&nbsp;</p>
+          <pre class="fragment"><code>/**
+ * @export
+ */
+app.doSomething = function() {
+    ...
+};</code></pre>
+          <aside class="notes">
+          The property names of the object are renamed.
+          TODO: Also mention the difference between `a.name`
+          vs `a['name']`, see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
+          </aside>
+        </section>
+
         <section>
           <h1 class="beefy">Typing</h1>
         </section>
+
+        <section>
+          <h1 class="beefy">Externs</h1>
+        </section>
+
+        <section>
+          <h1 class="beefy">And OpenLayers?</h1>
+        </section>
+
         <section>
           <h1 class="beefy">First example with ol3</h1>
         </section>
+
         <section>
           <h1 class="beefy">Why compile with ol3</h1>
         </section>
+
         <section>
           <h1 class="beefy">Build sizes</h1>
         </section>
+
         <section>
           <h1 class="beefy">Tooling</h1>
         </section>
+
         <section>
           <h1 class="beefy">Example projects</h1>
         </section>
+
         <section data-background="img/peak.jpg">
           <div class="bg-box" style="margin-top: 200px;">
             <h1 class="big">Learning curve?</h1>
           </div>
         </section>
+
         <section>
           <h1 class="beefy">Resources: How to get started</h1>
         </section>
+
         <section>
           <h1 class="beefy">This talk</h1>
           <p>This presentation on GitHub: <br/><a href="https://github.com/tsauerwein/foss4g2016_ol3_closure"
@@ -266,9 +397,11 @@ function() {
               target="_blank"><img src="img/twitter.png"></a>
           </p>
         </section>
+
         <section>
           todo: image licenses
         </section>
+
         <section>
           <img src="img/logo_c2c_end.png" style="width: 100%; ">
         </section>
@@ -282,7 +415,7 @@ function() {
       // Full list of configuration options available here:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
-        controls: true,
+        controls: false,
         progress: true,
         history: true,
         center: true,
