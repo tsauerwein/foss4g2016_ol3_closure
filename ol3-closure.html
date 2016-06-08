@@ -236,7 +236,7 @@
 
         <section class="compilation-levels">
           <h1 class="beefy">Compilation levels</h1>
-          <div>
+          <div class="fragment">
             <h2>WHITESPACE_ONLY</h2>
             <p>removes comments/whitespace</p>
           </div>
@@ -320,7 +320,7 @@ console.log(a);
           <aside class="notes">
           The property names of the object are renamed.
           TODO: Also mention the difference between `a.name`
-          vs `a['name']`, see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
+          vs `a['name']`? see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
           </aside>
         </section>
 
@@ -328,7 +328,7 @@ console.log(a);
           <h1 class="beefy">Exports</h1>
           <pre><code>&#x3C;button onclick=&#x22;app.doSomething()&#x22;&#x3E;...&#x3C;/button&#x3E;</code></pre>
           <p>&nbsp;</p>
-          <p class="fragment">How to avoid the renaming and dead-code removal?</p>
+          <p class="fragment">How to prevent that <code>app.doSomething</code> is renamed or removed?</p>
           <p>&nbsp;</p>
           <pre class="fragment"><code>/**
  * @export
@@ -337,14 +337,129 @@ app.doSomething = function() {
     ...
 };</code></pre>
           <aside class="notes">
-          The property names of the object are renamed.
-          TODO: Also mention the difference between `a.name`
-          vs `a['name']`, see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
+          As we saw, functions that are not used are removed or can get renamed.
+          But what if we are writing an API, which provides functions that are
+          not directly used? Or what if we simply want to call a function from 
+          HTML or an Angular directive?
+          The annotation `@export` makes sure that functions, properties or
+          classes are available.
           </aside>
         </section>
 
         <section>
-          <h1 class="beefy">Typing</h1>
+          <h1 class="beefy">Type annotations</h1>
+          <pre><code>/**
+ * @constructor
+ * @param {number} x X.
+ * @param {number} y Y.
+ * @param {number=} opt_z Z.
+ */
+app.Point = function(x, y, opt_z) { ... };
+
+
+/**
+ * @param {!app.Point} other An other point.
+ * @return {number} The distance.
+ */
+app.Point.prototype.distanceTo = function(other) { ... };</code></pre>
+          <aside class="notes">
+          Code compiled with the Closure Compiler can be annotated with
+          types. In this example we see:
+          - @constructor: to mark the constructor of a class
+          - @param: for function parameters (`=` for optional parameters and
+            `!app.Point` for not null)
+          - @return
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">JSDoc Tags: A selection</h1>
+          <p><code>@const @constructor @deprecated @dict @enum @export</code></p>
+          <p><code>@extends @final @implements @inheritDoc @interface</code></p>
+          <p><code>@nosideeffects @override @package @param @private</code></p>
+          <p><code>@protected @record @return @struct @throws @type ...</code></p>
+          <p>&nbsp;</p>
+          <p><a href="https://developers.google.com/closure/compiler/docs/js-for-compiler" target="_blank">Reference</a></p>
+          <aside class="notes">
+          - Tags for classes: @constructor, @implements, @extends, @interface
+          - Visibility: @private, @protected, @package, @public
+          - Behavior: @nosideeffects
+          - ...
+          </aside>
+        </section>
+
+        <section data-background="img/annoyed_cat.jpg">
+          <div class="bg-box" style="margin-top: 460px;">
+            <h1 class="big" style="font-size: 2.2em;">Why bother with types?</h1>
+          </div>
+          <aside class="notes">
+          Isn't JavaScript all about flexibility? Why should I waste time caring
+          about types like in Java?
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">Why types?</h1>
+          <h2>Understanding code</h2>
+          <pre class="fragment"><code>entries.forEach(function(entry) {
+  entry.data.validate();
+});</code></pre>
+          <p class="fragment">What does this code do?</p>
+          <aside class="notes">
+          A big part of developing software is spent trying to understand code.
+          Types can be huge help for that.
+          Consider the example:
+          - What does ´validate´ do?
+          - Where is the function defined?
+          - There might be multiple implementations!
+          - Need to know what `entry.data``is.
+          - Need to know what `entry` is.
+          - Need to know what `entries` is.
+          - Where does `entries` come from?
+          - If a parameters, try to find call sites...
+
+          Example from MyPi talk at PyCon 2016:
+          https://www.dropbox.com/s/efatwr0pozsargb/PyCon mypy talk 2016.pdf
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">Why types?</h1>
+          <h2>Static type check</h2>
+          <pre class="fragment"><code style="font-size: 90%;">ERR! compile src/main.js:14: WARNING - Function app.Point:
+  called with 1 argument(s). Function requires at least
+  2 argument(s) and no more than 3 argument(s).
+ERR! compile     var p5 = new app.Point([0, 0]);
+ERR! compile              ^
+ERR! compile
+ERR! compile src/main.js:14: WARNING - actual parameter 1 of
+  app.Point does not match formal parameter
+ERR! compile found   : Array
+ERR! compile required: number
+ERR! compile     var p5 = new app.Point([0, 0])
+
+ERR! compile 0 error(s), 2 warning(s)
+ERR! compile 95.5% typed</code></pre>
+          <aside class="notes">
+          When type annotations are provided, the Closure Compiler will do
+          type checks. For example it will check if a function is called
+          with correct arguments or if an object really has the method that is
+          called.
+          It is not required that an application is 100% typed. The compiler
+          tries to figure out the types if no types are provided
+          (partial/optional typing).
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">Why types?</h1>
+          <h2>IDE integration, refactorings</h2>
+          <img src="img/ide-docs.png" />
+          <aside class="notes">
+          Some IDEs read the type annotation, so that the documentation can
+          be displayed or going to an implementation, getting code completion,
+          etc is possible.
+          </aside>
         </section>
 
         <section>

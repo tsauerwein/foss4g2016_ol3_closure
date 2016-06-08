@@ -269,3 +269,15 @@ body {
 .reveal p {
   line-height: normal;
 }
+
+.reveal p code {
+  color: #000;
+  padding: 2px 5px;
+  white-space: nowrap;
+  max-width: 100%;
+  background: #fff;
+  border: solid 1px #e1e4e5;
+  font-size: 75%;
+  font-family: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+  overflow-x: auto;
+}
