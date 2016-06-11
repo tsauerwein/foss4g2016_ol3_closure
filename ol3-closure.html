@@ -78,7 +78,7 @@
       .bg-box ul {
         margin-left: 30px;
       }
-      .compilation-levels h2 {
+      .headers-as-list h2 {
         margin-top: 40px;
         margin-bottom: 5px;
       }
@@ -132,7 +132,7 @@
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <div style="display: flex; justify-content: space-between; padding: 10px;" class="fat">
-              <span class="fragment">pre-built</span>
+              <span class="fragment">pre-built<br><span style="font-weight: normal;">(ol.js)</span></span>
               <span class="fragment">custom-built</span>
               <span class="fragment">co-built</span>
             </div>
@@ -234,7 +234,7 @@
           </aside>
         </section>
 
-        <section class="compilation-levels">
+        <section class="headers-as-list">
           <h1 class="beefy">Compilation levels</h1>
           <div class="fragment">
             <h2>WHITESPACE_ONLY</h2>
@@ -418,7 +418,8 @@ app.Point.prototype.distanceTo = function(other) { ... };</code></pre>
           - Where does `entries` come from?
           - If a parameters, try to find call sites...
 
-          Example from MyPi talk at PyCon 2016:
+          Example from MyPy talk at PyCon 2016:
+          https://us.pycon.org/2016/schedule/presentation/2266/
           https://www.dropbox.com/s/efatwr0pozsargb/PyCon mypy talk 2016.pdf
           </aside>
         </section>
@@ -462,42 +463,191 @@ ERR! compile 95.5% typed</code></pre>
           </aside>
         </section>
 
-        <section>
-          <h1 class="beefy">Externs</h1>
+        <section class="headers-as-list">
+          <h1 class="beefy">Using external libraries</h1>
+          <div class="fragment">
+            <h2>Compile with application</h2>
+            <p>library must be compatible to Closure Compiler</p>
+          </div>
+          <div class="fragment">
+            <h2>Reference library outside compilation</h2>
+            <p>compilation requires an <code>externs</code> file</p>
+            <pre><code style="font-size: 90%;">&#x3C;script type=&#x22;text/javascript&#x22; src=&#x22;libs/jquery.min.js&#x22;&#x3E;&#x3C;/script&#x3E;
+&#x3C;script type=&#x22;text/javascript&#x22; src=&#x22;build/app.js&#x22;&#x3E;&#x3C;/script&#x3E;</code></pre>
+          </div>
+          <aside class="notes">
+          To use external libraries within an application that is compiled with
+          the Closure Compile there are two approaches:
+          - compile the external library with the application
+          - or only reference the external library from the application
+            This requires that 'externs' files (similar to header files)
+            are provided for the library.
+          </aside>
         </section>
 
         <section>
-          <h1 class="beefy">And OpenLayers?</h1>
+          <h1 class="beefy">Externs files</h1>
+          <pre><code style="font-size: 90%;">var map = L.map('map').setView([0, 0], 13);</code></pre>
+          <pre class="fragment"><code style="font-size: 90%;">ERR! compile src/main.js:4: ERROR - variable L is undeclared</code></pre>
+          <div class="fragment">
+            <p><code>externs</code> file</p>
+            <pre><code style="font-size: 80%;">/** @const */
+var L = {};
+
+/**
+ * @param {string} div
+ * @return {LeafletMap}
+ */
+L.map = function(div) {};
+
+
+/** @constructor */
+var LeafletMap = function() {};
+
+...</code></pre>
+          </div>
+          <aside class="notes">
+          For example when using Leaflet in an application, the compiler would
+          complain that Leaflet is not defined. To make Leaflet known to the
+          compiler, an 'externs' file has to be passed to the compiler. This
+          file documents the interface of the library.
+          There are externs available for many popular libraries (e.g. for
+          jQuery, Angular or Bootstrap).
+          </aside>
+        </section>
+
+        <section data-background="img/map.jpg">
+          <div class="bg-box" style="margin-top: 460px;">
+            <h1 class="big" style="font-size: 2.2em;">And OpenLayers?</h1>
+          </div>
+          <aside class="notes">
+          OpenLayers uses the Closure Compiler and (still) some parts of the
+          Closure Library. This makes it possible to compile your application
+          together with OpenLayers.
+          </aside>
         </section>
 
         <section>
-          <h1 class="beefy">First example with ol3</h1>
+          <h1 class="beefy">Simple example with ol3</h1>
+          <pre><code style="font-size: 90%;">goog.provide('app');
+
+goog.require('ol.Map');
+goog.require('ol.View');
+goog.require('ol.layer.Tile');
+goog.require('ol.source.OSM');
+
+var map = new ol.Map({
+    target: 'map',
+    layers: [
+        new ol.layer.Tile({source: new ol.source.OSM()})
+    ],
+    view: new ol.View({center: [0, 0], zoom: 4})
+});</code></pre>
+        <aside class="notes">
+        A namespace `app` is created with `goog.provide` `goog.require` defines
+        the classes and namespaces that are used. The rest is normal
+        JavaScript code.
+        </aside>
         </section>
 
         <section>
-          <h1 class="beefy">Why compile with ol3</h1>
+          <h1 class="beefy">Compiler configuration</h1>
+          <pre><code style="font-size: 80%;">{
+  "lib": [
+    "node_modules/openlayers/src/**/*.js",
+    "node_modules/openlayers/build/ol.ext/**/*.js",
+    "src/**/*.js"
+  ],
+  "compile": {
+    "closure_entry_point": "app",
+    "externs": [
+      "node_modules/openlayers/externs/bingmaps.js",
+      ...
+    ],
+    "define": ["ol.ENABLE_DOM=false", "ol.ENABLE_WEBGL=false"],
+    "compilation_level": "ADVANCED",
+    "warning_level": "VERBOSE",
+    "output_wrapper": "(function(){%output%})();",
+    "use_types_for_optimization": true,
+    ...
+  }
+}</code></pre>
+        <aside class="notes">
+        Compiler configuration file for 'closure_utils':
+        - `lib` defines the sources files, of OpenLayers and the application
+          itself.
+        - `closure_entry_point`: Used to determine which source files are
+          included in the compilation.
+        - `externs` from OpenLayers
+        See https://github.com/openlayers/closure-util/blob/master/compiler-options.txt
+        </aside>
+        </section>
+
+        <section class="headers-as-list">
+          <h1 class="beefy">Tooling</h1>
+          <div class="fragment">
+            <h2>compiler.jar</h2>
+            <p>Closure Compiler as Java CLI tool</p>
+          </div>
+          <div class="fragment">
+            <h2>closure-util</h2>
+            <p>npm package, wrapper around compiler.jar, dev. server</p>
+            <p class="fragment"><code>closure-util build config.json dist/app.js</code></p>
+            <p class="fragment"><code>closure-util serve config.json</code></p>
+          </div>
+          <aside class="notes">
+          The Closure Compiler is a Java application. To ease the usage,
+          the tool 'closure-util' wraps the compiler into a npm package.
+          </aside>
+        </section>
+
+        <section>
+          <h1 class="beefy">Why compile with OpenLayers?</h1>
+          <ul>
+            <li class="fragment">Only pay for what you use (build size)</li>
+            <li class="fragment">Easier to extend OpenLayers</li>
+            <li class="fragment">Benefit from the advantages of the Closure Compiler</li>
+          </ul>
         </section>
 
         <section>
           <h1 class="beefy">Build sizes</h1>
-        </section>
-
-        <section>
-          <h1 class="beefy">Tooling</h1>
+          todo
         </section>
 
         <section>
           <h1 class="beefy">Example projects</h1>
+          <ul>
+            <li><a href="https://github.com/openlayers/ol3" target="_blank">openlayers/ol3</a></li>
+            <li><a href="https://github.com/camptocamp/ngeo" target="_blank">camptocamp/ngeo</a> (ol3 + Angular)</li>
+            <li><a href="https://github.com/Geoportail-Luxembourg/geoportailv3" target="_blank">Geoportail-Luxembourg/geoportailv3</a> (ol3 + ngeo + Angular)</li>
+            <li><a href="https://github.com/geoadmin/mf-geoadmin3" target="_blank">geoadmin/mf-geoadmin3</a> (ol3 + Angular + Cesium)</li>
+            <li><a href="https://map.wanderland.ch" target="_blank">SwitzerlandMobility</a> (ol3 + ngeo + Angular + Cesium)</li>
+            <li><a href="https://github.com/camptocamp/provelobern_bicyclerouteplanner" target="_blank">camptocamp/provelobern_bicyclerouteplanner</a> (ol3 + ngeo + Angular)</li>
+            <li>...</li>
+          </ul>
         </section>
 
         <section data-background="img/peak.jpg">
-          <div class="bg-box" style="margin-top: 200px;">
+          <div class="bg-box" style="margin-top: 460px;">
             <h1 class="big">Learning curve?</h1>
           </div>
         </section>
 
         <section>
           <h1 class="beefy">Resources: How to get started</h1>
+          <ul>
+            <li><a href="http://openlayers.org/en/latest/doc/tutorials/closure.html" target="_blank">OpenLayers 3 Tutorial: Compiling Application with Closure Compiler</a></li>
+            <li><a href="https://developers.google.com/closure/compiler/" target="_blank">Google Closure Documentation</a></li>
+            <li><a href="http://shop.oreilly.com/product/0636920001416.do" target="_blank">Book: Closure - The Definitive Guide by Michael Bolin</a></li>
+            <li><a href="https://developers.google.com/closure/compiler/docs/js-for-compiler" target="_blank">Annotating JavaScript for the Closure Compiler</a></li>
+            <li><a href="https://www.youtube.com/watch?v=M3uWx-fhjUc" target="_blank">Google I/O 2011: JavaScript Programming in the Large with Closure Tools</a></li>
+            <li><a href="https://github.com/google/closure-compiler/tree/master/contrib/externs" target="_blank">Externs files</a></li>
+            <li><a href="https://github.com/openlayers/closure-util/blob/master/compiler-options.txt" target="_blank">Compiler options</a></li>
+            <li><a href="https://github.com/openlayers/closure-util" target="_blank">closure-util</a></li>
+            <li><a href="http://closureplease.com/resources/" target="_blank">More resources</a></li>
+            <li><a href="https://github.com/tsauerwein/ol3-closure-samples" target="_blank">Examples used in this talk</a></li>
+          </ul>
         </section>
 
         <section>
@@ -514,11 +664,17 @@ ERR! compile 95.5% typed</code></pre>
         </section>
 
         <section>
-          todo: image licenses
+          <img src="img/logo_c2c_end.png" style="width: 100%; ">
         </section>
 
         <section>
-          <img src="img/logo_c2c_end.png" style="width: 100%; ">
+          <h1 class="beefy">Credits for these great photos!</h1>
+          <a href="https://www.flickr.com/photos/129816626@N04/21291831136/in/album-72157658443622102/" target="_blank"><img src="img/map.jpg" width="200"></a>
+          <a href="https://stocksnap.io/photo/KD30XPQR0A" target="_blank"><img src="img/tools.jpg" width="200"></a><br>
+          <a href="https://stocksnap.io/photo/QDDPZH3YSO" target="_blank"><img src="img/cranes.jpg" width="200"></a>
+          <a href="https://stocksnap.io/photo/D3G81TJZMU" target="_blank"><img src="img/peak.jpg" width="200"></a><br>
+          <a href="https://stocksnap.io/photo/OTQJFKY0L7" target="_blank"><img src="img/coffee.jpg" width="200"></a>
+          <a href="https://www.flickr.com/photos/crerwin/1089567053/" target="_blank"><img src="img/annoyed_cat.jpg" width="200"></a>
         </section>
       </div>
     </div>
@@ -534,6 +690,7 @@ ERR! compile 95.5% typed</code></pre>
         progress: true,
         history: true,
         center: true,
+        showNotes: false,
         rollingLinks: false,
         transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none,
 
