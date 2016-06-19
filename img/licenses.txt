@@ -1,0 +1,6 @@
+tools.jpg: https://stocksnap.io/photo/KD30XPQR0A
+coffee.jpg: https://stocksnap.io/photo/OTQJFKY0L7
+cranes.jpg: https://stocksnap.io/photo/QDDPZH3YSO
+peak.jpg: https://stocksnap.io/photo/D3G81TJZMU
+annoyed_cat.jpg: https://www.flickr.com/photos/crerwin/1089567053/
+map.jpg: https://www.flickr.com/photos/129816626@N04/21291831136/in/album-72157658443622102/
