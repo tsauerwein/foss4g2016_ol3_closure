@@ -19,6 +19,7 @@
   "scripts": {
     "install": "bower install",
     "postinstall": "grunt clean build",
-    "start": "grunt start"
+    "start": "grunt start",
+    "gh-pages": "grunt build gh-pages"
   }
 }

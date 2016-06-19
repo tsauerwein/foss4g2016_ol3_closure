@@ -66,6 +66,12 @@ module.exports = function(grunt) {
         tasks: ['jade']
       }
     },
+    'gh-pages': {
+      options: {
+        base: build
+      },
+      src: ['**']
+    },
     clean: {
       all: build
     }
