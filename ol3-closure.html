@@ -132,9 +132,9 @@
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <div style="display: flex; justify-content: space-between; padding: 10px;" class="fat">
-              <span class="fragment">pre-built<br><span style="font-weight: normal;">(ol.js)</span></span>
-              <span class="fragment">custom-built</span>
-              <span class="fragment">co-built</span>
+              <span class="fragment">full build<br><span style="font-weight: normal;">(ol.js)</span></span>
+              <span class="fragment">custom build</span>
+              <span class="fragment">compiled<br>with<br>application</span>
             </div>
             <p>&nbsp;</p>
           </div>
@@ -374,10 +374,10 @@ app.Point.prototype.distanceTo = function(other) { ... };</code></pre>
 
         <section>
           <h1 class="beefy">JSDoc Tags: A selection</h1>
-          <p><code>@const @constructor @deprecated @dict @enum @export</code></p>
-          <p><code>@extends @final @implements @inheritDoc @interface</code></p>
-          <p><code>@nosideeffects @override @package @param @private</code></p>
-          <p><code>@protected @record @return @struct @throws @type ...</code></p>
+          <p><code>@const @constructor @enum @export</code></p>
+          <p><code>@extends @final @implements @interface</code></p>
+          <p><code>@nosideeffects @param @private</code></p>
+          <p><code>@protected @return @throws @type ...</code></p>
           <p>&nbsp;</p>
           <p><a href="https://developers.google.com/closure/compiler/docs/js-for-compiler" target="_blank">Reference</a></p>
           <aside class="notes">
@@ -566,9 +566,7 @@ var map = new ol.Map({
     ],
     "define": ["ol.ENABLE_DOM=false", "ol.ENABLE_WEBGL=false"],
     "compilation_level": "ADVANCED",
-    "warning_level": "VERBOSE",
     "output_wrapper": "(function(){%output%})();",
-    "use_types_for_optimization": true,
     ...
   }
 }</code></pre>
