@@ -140,9 +140,9 @@
           </div>
           <aside class="notes">
           How can you use ol3?
-          1. pre-built: pre-compiled, full build
+          1. full build: pre-compiled, e.g. from NPM or a CDN
           2. custom-built: compile ol3 with only the modules that you need
-          3. co-built: compile your application together with ol3
+          3. compiled with application
           </aside>
         </section>
 
@@ -161,18 +161,18 @@
         <section>
           <h1 class="beefy">Challenges of writing large JS applications</h1>
           <ul>
-            <li class="fragment">namespaces?</li>
+            <li class="fragment">namespaces/modules?</li>
             <li class="fragment">visibility control?</li>
             <li class="fragment">type checking?</li>
             <li class="fragment">static checking?</li>
             <li class="fragment">testing?</li>
           </ul>
           <aside class="notes">
-          - No namespaces (modules, organize your code)
-          - No visibility control (public/protected/private)
-          - No type checking (duck-typing vs. static-typing,
+          - namespaces? (modules, organizing your code)
+          - visibility control? (public/protected/private)
+          - type checking? (duck-typing vs. static-typing,
             which properties/methods does that object have)
-          - No static checking (errors only detected at run time)
+          - static checking? (errors only detected at run time)
           - Testing (not covered by this talk)
           </aside>
         </section>
@@ -319,8 +319,8 @@ console.log(a);
           </div>
           <aside class="notes">
           The property names of the object are renamed.
-          TODO: Also mention the difference between `a.name`
-          vs `a['name']`? see https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames
+          For the difference between `a.name`
+          vs `a['name']` see the <a href="https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames">docs</a>.
           </aside>
         </section>
 
@@ -394,7 +394,11 @@ app.Point.prototype.distanceTo = function(other) { ... };</code></pre>
           </div>
           <aside class="notes">
           Isn't JavaScript all about flexibility? Why should I waste time caring
-          about types like in Java?
+          about types? For strongly typed languages like Java or C++ the compiler
+          needs types for the memory management (e.g. to reserve enough space
+          for a variable). But the JS interpreter doesn't care.
+          So, you are not using types for the compiler, but only for you and
+          your fellow developers that have to work with your code.
           </aside>
         </section>
 
@@ -604,7 +608,7 @@ var map = new ol.Map({
           <ul>
             <li class="fragment">Only pay for what you use (build size)</li>
             <li class="fragment">Easier to extend OpenLayers</li>
-            <li class="fragment">Benefit from the advantages of the Closure Compiler</li>
+            <li class="fragment">Benefit from the advantages of the Closure Compiler (static/type checking, efficient code, ...)</li>
           </ul>
         </section>
 
@@ -692,7 +696,7 @@ var map = new ol.Map({
         progress: true,
         history: true,
         center: true,
-        showNotes: false,
+        showNotes: true,
         rollingLinks: false,
         transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none,
 
