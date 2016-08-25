@@ -207,8 +207,8 @@
           <ul>
             <li class="fragment">code checks (syntax, variable references)</li>
             <li class="fragment">checks for common pitfalls</li>
-            <li class="fragment">optimizations (inlining, dead-code)</li>
             <li class="fragment">static type checking</li>
+            <li class="fragment">advanced optimizations (inlining, dead-code)</li>
           </ul>
           <aside class="notes">
           Most build system for JS apps have some kind of pre-processor
@@ -234,6 +234,7 @@
           </aside>
         </section>
 
+<!--
         <section class="headers-as-list">
           <h1 class="beefy">Compilation levels</h1>
           <div class="fragment">
@@ -258,6 +259,7 @@
             + optimizations (inlining, dead-code removal)
           </aside>
         </section>
+-->
 
         <section>
           <h1 class="beefy">Dead-code removal + Inlining</h1>
@@ -431,6 +433,7 @@ app.Point.prototype.distanceTo = function(other) { ... };</code></pre>
         <section>
           <h1 class="beefy">Why types?</h1>
           <h2>Static type check</h2>
+          <pre class="fragment"><code style="font-size: 90%;">var point = new app.Point([0, 0]);</code></pre>
           <pre class="fragment"><code style="font-size: 90%;">ERR! compile src/main.js:14: WARNING - Function app.Point:
   called with 1 argument(s). Function requires at least
   2 argument(s) and no more than 3 argument(s).
@@ -525,8 +528,8 @@ var LeafletMap = function() {};
             <h1 class="big" style="font-size: 2.2em;">And OpenLayers?</h1>
           </div>
           <aside class="notes">
-          OpenLayers uses the Closure Compiler and (still) some parts of the
-          Closure Library. This makes it possible to compile your application
+          OpenLayers uses the Closure Compiler (and did use some parts of the
+          Closure Library). This makes it possible to compile your application
           together with OpenLayers.
           </aside>
         </section>
@@ -617,7 +620,7 @@ var map = new ol.Map({
           <img src="img/build-sizes.png">
           <aside class="notes">
           This diagram compares a full ol3 build ("pre-build") with a build that
-          compiles a simple "Hello World" application with OpenLayers ("co-built"). Version 3.16.0 of ol3 was used.
+          compiles a simple "Hello World" application with OpenLayers. Version 3.16.0 of ol3 was used.
           </aside>
         </section>
 
@@ -625,6 +628,7 @@ var map = new ol.Map({
           <h1 class="beefy">Example projects</h1>
           <ul>
             <li><a href="https://github.com/openlayers/ol3" target="_blank">openlayers/ol3</a></li>
+            <li><a href="https://github.com/openlayers/ol3-cesium" target="_blank">openlayers/ol3-cesium</a> (ol3 + Cesium)</li>
             <li><a href="https://github.com/camptocamp/ngeo" target="_blank">camptocamp/ngeo</a> (ol3 + Angular)</li>
             <li><a href="https://github.com/Geoportail-Luxembourg/geoportailv3" target="_blank">Geoportail-Luxembourg/geoportailv3</a> (ol3 + ngeo + Angular)</li>
             <li><a href="https://github.com/geoadmin/mf-geoadmin3" target="_blank">geoadmin/mf-geoadmin3</a> (ol3 + Angular + Cesium)</li>
@@ -663,6 +667,7 @@ var map = new ol.Map({
               Support for ES 6 modules in OpenLayers 3
               (module bundlers: <span style="font-style: italic;">tree-shaking</span>)
             </li>
+            <li class="fragment">Closure Compiler is a transpiler (ES 6 > ES 5)</li>
             <li class="fragment">TypeScript</li>
           </ul>
         </section>
